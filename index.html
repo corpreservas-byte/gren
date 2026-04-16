@@ -498,15 +498,19 @@
               <h2 class="letters-slide-up">Déjenos un Mensaje</h2>
             </div>
 
-            <!-- FORMULARIO DE RESERVA -->
-            <!-- Envia a corp.reservas@gmail.com via FormSubmit.co (gratis, sin backend) -->
+            <!-- FORMULARIO DE RESERVA (AJAX - no necesita pagina de redireccion) -->
             <!-- IMPORTANTE: La primera vez que alguien envie el formulario, llegara un email -->
             <!-- de confirmacion a corp.reservas@gmail.com - haz clic en "Confirm" para activarlo -->
-            <form action="https://formsubmit.co/corp.reservas@gmail.com" method="POST" class="contact-form-inline">
-              <input type="hidden" name="_subject" value="Nueva Reserva - Taxi Green Lima">
-              <input type="hidden" name="_captcha" value="false">
-              <input type="hidden" name="_template" value="table">
-              <input type="hidden" name="_next" value="https://taxi-green-lima.com/gracias.html">
+            <div id="form-exito" style="display:none; background:#fff; border-radius:10px; padding:30px 20px; text-align:center;">
+              <div style="width:60px;height:60px;background:#28a745;border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 18px;">
+                <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+              </div>
+              <h3 style="color:#1a1a1a;font-size:22px;margin-bottom:10px;">¡Mensaje Enviado!</h3>
+              <p style="color:#555;font-size:15px;margin-bottom:18px;">Recibimos tu reserva. Te contactaremos a la brevedad.</p>
+              <a href="https://api.whatsapp.com/send?phone=51967526092&text=Buen día Taxi Green Lima, acabo de enviar mi reserva y quiero confirmarla" target="_blank" style="display:inline-block;background:#25d366;color:#fff;padding:12px 24px;border-radius:6px;font-weight:700;text-decoration:none;font-size:15px;">Confirmar por WhatsApp</a>
+            </div>
+
+            <form id="reserva-form" class="contact-form-inline">
               <input type="text" name="_honey" style="display:none">
 
               <div class="form-group">
@@ -530,8 +534,35 @@
               <div class="form-group">
                 <textarea name="Mensaje" placeholder="Tipo de vehiculo, numero de pasajeros u otro detalle..."></textarea>
               </div>
-              <button type="submit" class="btn-submit">Enviar Reserva</button>
+              <button type="submit" class="btn-submit" id="btn-enviar">Enviar Reserva</button>
             </form>
+
+            <script>
+            document.getElementById('reserva-form').addEventListener('submit', function(e) {
+              e.preventDefault();
+              var btn = document.getElementById('btn-enviar');
+              btn.disabled = true;
+              btn.textContent = 'Enviando...';
+              var formData = new FormData(this);
+              fetch('https://formsubmit.co/ajax/corp.reservas@gmail.com', {
+                method: 'POST',
+                headers: { 'Accept': 'application/json' },
+                body: formData
+              })
+              .then(function(res) { return res.json(); })
+              .then(function(data) {
+                document.getElementById('reserva-form').style.display = 'none';
+                document.getElementById('form-exito').style.display = 'block';
+                // GOOGLE ADS CONVERSION - Descomenta las 2 lineas de abajo cuando tengas tu ID:
+                // if(typeof gtag !== 'undefined') gtag('event', 'conversion', {'send_to': 'AW-XXXXXXXXXX/XXXXXXXXXXXX'});
+              })
+              .catch(function() {
+                btn.disabled = false;
+                btn.textContent = 'Enviar Reserva';
+                alert('Hubo un error al enviar. Por favor escríbenos por WhatsApp al (+51) 967 526 092');
+              });
+            });
+            </script>
           </div>
         </div>
       </div>
