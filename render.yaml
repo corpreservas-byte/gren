@@ -1,14 +1,29 @@
 services:
   - type: web
-    name: proyecto-taxi
+    name: taxi-green-lima
     runtime: static
     staticPublishPath: .
     routes:
       - type: rewrite
+        source: /gracias.html
+        destination: /gracias.html
+      - type: rewrite
         source: /*
         destination: /index.html
     headers:
-      - path: /assets/*
+      - path: /css/*
+        name: Cache-Control
+        value: public, max-age=31536000, immutable
+      - path: /js/*
+        name: Cache-Control
+        value: public, max-age=31536000, immutable
+      - path: /images/*
+        name: Cache-Control
+        value: public, max-age=31536000, immutable
+      - path: /fonts/*
+        name: Cache-Control
+        value: public, max-age=31536000, immutable
+      - path: /botones/*
         name: Cache-Control
         value: public, max-age=31536000, immutable
       - path: /*
